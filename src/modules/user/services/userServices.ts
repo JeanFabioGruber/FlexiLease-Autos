@@ -84,6 +84,7 @@ export default class UserService {
     }
 
     const token = generateToken(user._id.toString());
+
     return token;
   }
 
