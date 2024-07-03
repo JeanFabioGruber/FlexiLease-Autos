@@ -32,11 +32,6 @@ export default class CarService {
       throw new Error("É necessário ter pelo menos um acessório.");
     }
 
-    const carExists = await Car.findOne({ modelo });
-    if (carExists) {
-      throw new Error("Modelo de carro já registrado.");
-    }
-
     const uniqueAccessories = [...new Set(accessories)];
 
     const newCar = new Car({
