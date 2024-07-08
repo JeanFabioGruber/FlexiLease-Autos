@@ -1,0 +1,952 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "FlexiLease Autos API",
+    "description": "API para gerenciamento de carros, usuários e reservas da FlexiLease Autos",
+    "version": "1.0.0"
+  },
+  "paths": {
+    "/reservations": {
+      "post": {
+        "summary": "Criar uma nova reserva",
+        "tags": [
+          "Reservas"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "id_user": {
+                    "type": "string",
+                    "description": "ID do usuário que está fazendo a reserva."
+                  },
+                  "id_car": {
+                    "type": "string",
+                    "description": "ID do carro que está sendo reservado."
+                  },
+                  "start_date": {
+                    "type": "string",
+                    "description": "Data de início da reserva.",
+                    "example": "08/07/2024"
+                  },
+                  "end_date": {
+                    "type": "string",
+                    "description": "Data de término da reserva.",
+                    "example": "15/07/2024"
+                  }
+                },
+                "required": [
+                  "id_user",
+                  "id_car",
+                  "start_date",
+                  "end_date"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Reserva criada com sucesso",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Reservation"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Requisição inválida",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      },
+      "get": {
+        "summary": "Obter todas as reservas",
+        "tags": [
+          "Reservas"
+        ],
+        "responses": {
+          "200": {
+            "description": "Lista de reservas encontradas",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "reservations": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/Reservation"
+                      }
+                    },
+                    "total": {
+                      "type": "number",
+                      "description": "Total de reservas encontradas"
+                    },
+                    "limit": {
+                      "type": "number",
+                      "description": "Limite de resultados por página"
+                    },
+                    "offset": {
+                      "type": "number",
+                      "description": "Número da página atual"
+                    },
+                    "offsets": {
+                      "type": "number",
+                      "description": "Total de páginas"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Requisição inválida",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/reservations/{id}": {
+      "get": {
+        "summary": "Obter uma reserva específica",
+        "tags": [
+          "Reservas"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "ID da reserva a ser obtida"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Reserva encontrada",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Reservation"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Requisição inválida",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "summary": "Atualizar uma reserva",
+        "tags": [
+          "Reservas"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "ID da reserva a ser atualizada"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Reservation"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Reserva atualizada com sucesso",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Reservation"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Requisição inválida",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "summary": "Deletar uma reserva",
+        "tags": [
+          "Reservas"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "ID da reserva a ser deletada"
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Reserva deletada com sucesso"
+          },
+          "400": {
+            "description": "Requisição inválida",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/cars": {
+      "post": {
+        "summary": "Cria um novo carro",
+        "tags": [
+          "Carros"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "modelo": {
+                    "type": "string",
+                    "example": "Sedan"
+                  },
+                  "color": {
+                    "type": "string",
+                    "example": "Black"
+                  },
+                  "year": {
+                    "type": "integer",
+                    "example": 2023
+                  },
+                  "value_per_day": {
+                    "type": "number",
+                    "example": 50
+                  },
+                  "accessories": {
+                    "type": "array",
+                    "items": {
+                      "type": "string",
+                      "example": [
+                        "Air conditioning",
+                        "GPS"
+                      ]
+                    }
+                  },
+                  "number_of_passengers": {
+                    "type": "integer",
+                    "example": 5
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Carro criado com sucesso",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Car"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Requisição inválida",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      },
+      "get": {
+        "summary": "Lista todos os carros",
+        "tags": [
+          "Carros"
+        ],
+        "parameters": [
+          {
+            "in": "query",
+            "name": "offset",
+            "schema": {
+              "type": "integer",
+              "example": 1
+            },
+            "description": "Número da página"
+          },
+          {
+            "in": "query",
+            "name": "limit",
+            "schema": {
+              "type": "integer",
+              "example": 10
+            },
+            "description": "Número máximo de resultados por página"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Lista de carros retornada com sucesso",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "cars": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/Car"
+                      }
+                    },
+                    "total": {
+                      "type": "integer",
+                      "example": 10
+                    },
+                    "limit": {
+                      "type": "integer",
+                      "example": 10
+                    },
+                    "offset": {
+                      "type": "integer",
+                      "example": 1
+                    },
+                    "offsets": {
+                      "type": "integer",
+                      "example": 0
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Requisição inválida",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/cars/{id}": {
+      "get": {
+        "summary": "Obtém um carro pelo ID",
+        "tags": [
+          "Carros"
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "ID do carro a ser obtido"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Carro encontrado",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Car"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "ID inválido",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Carro não encontrado",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "summary": "Atualiza um carro pelo ID",
+        "tags": [
+          "Carros"
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "ID do carro a ser atualizado"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CarUpdate"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Carro atualizado com sucesso",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Car"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Requisição inválida",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Carro não encontrado",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "summary": "Deleta um carro pelo ID",
+        "tags": [
+          "Carros"
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "ID do carro a ser deletado"
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Carro deletado com sucesso"
+          },
+          "400": {
+            "description": "ID inválido",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Carro não encontrado",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/users": {
+      "post": {
+        "summary": "Cria um novo usuário",
+        "tags": [
+          "Usuários"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "type": "string",
+                    "example": "João Silva"
+                  },
+                  "cpf": {
+                    "type": "string",
+                    "example": "123.456.789-00"
+                  },
+                  "birth": {
+                    "type": "string",
+                    "example": "1990-01-01"
+                  },
+                  "email": {
+                    "type": "string",
+                    "example": "joao.silva@example.com"
+                  },
+                  "password": {
+                    "type": "string",
+                    "example": "senha123"
+                  },
+                  "cep": {
+                    "type": "string",
+                    "example": "12345-678"
+                  },
+                  "qualified": {
+                    "type": "string",
+                    "example": "Sim"
+                  },
+                  "phone": {
+                    "type": "string",
+                    "example": "47996856843"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Usuário criado com sucesso",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/User"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Requisição inválida",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/users/{id}": {
+      "get": {
+        "summary": "Obtém um usuário pelo ID",
+        "tags": [
+          "Usuários"
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "ID do usuário a ser obtido"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Usuário encontrado",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/User"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "ID inválido",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Usuário não encontrado",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "summary": "Atualiza um usuário pelo ID",
+        "tags": [
+          "Usuários"
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "ID do usuário a ser atualizado"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UserUpdate"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Usuário atualizado com sucesso",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/User"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Requisição inválida",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Usuário não encontrado",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "summary": "Deleta um usuário pelo ID",
+        "tags": [
+          "Usuários"
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "ID do usuário a ser deletado"
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Usuário deletado com sucesso"
+          },
+          "400": {
+            "description": "ID inválido",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Usuário não encontrado",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "Error": {
+        "type": "object",
+        "properties": {
+          "statusCode": {
+            "type": "integer",
+            "description": "Código de status HTTP"
+          },
+          "message": {
+            "type": "string",
+            "description": "Mensagem de erro"
+          }
+        }
+      },
+      "Reservation": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "ID da reserva"
+          },
+          "id_user": {
+            "type": "string",
+            "description": "ID do usuário que fez a reserva"
+          },
+          "id_car": {
+            "type": "string",
+            "description": "ID do carro reservado"
+          },
+          "start_date": {
+            "type": "string",
+            "description": "Data de início da reserva"
+          },
+          "end_date": {
+            "type": "string",
+            "description": "Data de término da reserva"
+          }
+        }
+      },
+      "Car": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "ID do carro"
+          },
+          "modelo": {
+            "type": "string",
+            "description": "Modelo do carro"
+          },
+          "color": {
+            "type": "string",
+            "description": "Cor do carro"
+          },
+          "year": {
+            "type": "integer",
+            "description": "Ano do carro"
+          },
+          "value_per_day": {
+            "type": "number",
+            "description": "Valor por dia para alugar o carro"
+          },
+          "accessories": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "description": "Lista de acessórios do carro"
+            }
+          },
+          "number_of_passengers": {
+            "type": "integer",
+            "description": "Número de passageiros que o carro pode transportar"
+          }
+        }
+      },
+      "CarUpdate": {
+        "type": "object",
+        "properties": {
+          "modelo": {
+            "type": "string",
+            "description": "Modelo do carro"
+          },
+          "color": {
+            "type": "string",
+            "description": "Cor do carro"
+          },
+          "year": {
+            "type": "integer",
+            "description": "Ano do carro"
+          },
+          "value_per_day": {
+            "type": "number",
+            "description": "Valor por dia para alugar o carro"
+          },
+          "accessories": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "description": "Lista de acessórios do carro"
+            }
+          },
+          "number_of_passengers": {
+            "type": "integer",
+            "description": "Número de passageiros que o carro pode transportar"
+          }
+        }
+      },
+      "User": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "ID do usuário"
+          },
+          "name": {
+            "type": "string",
+            "description": "Nome do usuário"
+          },
+          "cpf": {
+            "type": "string",
+            "description": "CPF do usuário"
+          },
+          "birth": {
+            "type": "string",
+            "description": "Data de nascimento do usuário"
+          },
+          "email": {
+            "type": "string",
+            "description": "E-mail do usuário"
+          },
+          "cep": {
+            "type": "string",
+            "description": "CEP do usuário"
+          },
+          "qualified": {
+            "type": "string",
+            "description": "Usuário está qualificado para alugar carros"
+          },
+          "phone": {
+            "type": "string",
+            "description": "phone do usuário"
+          }
+        }
+      },
+      "UserUpdate": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "Nome do usuário"
+          },
+          "cpf": {
+            "type": "string",
+            "description": "CPF do usuário"
+          },
+          "birth": {
+            "type": "string",
+            "description": "Data de nascimento do usuário"
+          },
+          "email": {
+            "type": "string",
+            "description": "E-mail do usuário"
+          },
+          "cep": {
+            "type": "string",
+            "description": "CEP do usuário"
+          },
+          "qualified": {
+            "type": "string",
+            "description": "Usuário está qualificado para alugar carros"
+          },
+          "phone": {
+            "type": "string",
+            "description": "phone do usuário"
+          }
+        }
+      }
+    }
+  }
+}
