@@ -4,7 +4,7 @@ import userRoutes from "./modules/user/routes/user.routes";
 import carRoutes from "./modules/car/routes/car.routes";
 import reservationRoutes from "./modules/reserva/routes/reservation.routes";
 
-const port = process.env.PORT || 8000;
+const port = process.env.PORT1 || 8000;
 const app = express();
 
 app.use(express.json());
